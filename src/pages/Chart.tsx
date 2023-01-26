@@ -4,6 +4,9 @@ import { useQuery } from "react-query";
 import { fetchCoinHistory } from "../api";
 import ApexChartLine from "react-apexcharts";
 import ApexChartStick from "react-apexcharts";
+import { useLocation } from "react-router";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./../atom";
 
 // router v5 props
 interface ChartProps {
@@ -23,6 +26,7 @@ interface IHistorical {
 
 const Chart = (/* {coinId}: ChartProps */) => {
   const { coinId } = useParams();
+  const isDark = useRecoilValue(isDarkAtom);
 
   const { isLoading, data } = useQuery<IHistorical[]>(
     ["ohlcv", coinId],
@@ -54,7 +58,7 @@ const Chart = (/* {coinId}: ChartProps */) => {
                 align: "left",
               },
               theme: {
-                mode: "dark",
+                mode: isDark ? "dark" : "light",
               },
               chart: {
                 height: 300,
@@ -113,7 +117,7 @@ const Chart = (/* {coinId}: ChartProps */) => {
                 align: "left",
               },
               theme: {
-                mode: "dark",
+                mode: isDark ? "dark" : "light",
               },
               chart: {
                 type: "candlestick",

@@ -1,8 +1,10 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { useQuery } from "react-query";
 import { fetchCoins } from "./../api";
 import { Helmet } from "react-helmet";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "./../atom";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -20,10 +22,11 @@ const Header = styled.header`
 const CoinsList = styled.ul``;
 
 const Coin = styled.li`
-  background-color: white;
-  color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.cardBgColor};
+  color: ${(props) => props.theme.textColor};
   border-radius: 15px;
   margin-bottom: 10px;
+  border: 1px solid white;
   a {
     display: flex;
     align-items: center;
@@ -65,9 +68,18 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
+interface IModeProps {
+  // recoil X 방식
+  // toggleDark: () => void;
+  // isDark: boolean;
+}
+
 const Coins = () => {
   // useQuery 방법
   const { isLoading, data } = useQuery<ICoin[]>("allCoins", fetchCoins);
+
+  // router v6 recoil X 방식, props 가져오기 : useOutletContext
+  // const { toggleDark, isDark }: IModeProps = useOutletContext();
 
   // 기존 방법
   // const [coins, setCoins] = useState<CoinInterface[]>([]);
@@ -83,6 +95,9 @@ const Coins = () => {
   //   })();
   // }, []);
 
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
+
   return (
     <Container>
       <Helmet>
@@ -90,6 +105,7 @@ const Coins = () => {
       </Helmet>
       <Header>
         <Title>Crypto Tracker</Title>
+        <button onClick={toggleDarkAtom}>Switch Mode</button>
       </Header>
       {isLoading ? (
         <Loader>Loading...</Loader>
@@ -98,7 +114,7 @@ const Coins = () => {
           {data?.slice(0, 50).map((coin) => (
             <Coin key={coin.id}>
               {/* <Link to={`/${coin.id}`}> */}
-              <Link to={`/${coin.id}`} state={{ name: coin.name }}>
+              <Link to={`/${coin.id}/chart`} /* state={{ isDark }} */>
                 <Img
                   src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
                 />

@@ -1,6 +1,11 @@
 import { Outlet } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { ThemeProvider } from "styled-components";
+import { lightTheme, darkTheme } from "./theme";
+import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { isDarkAtom } from "./atom";
 
 /* styled - reset 이라는 패키지를 설치할 수도 있겠지만 커스텀을 원할 수도 있으니 
 https://github.com/zacanger/styled-reset/blob/master/src/index.ts 복붙 */
@@ -68,11 +73,19 @@ const GlobalStyle = createGlobalStyle`
 `;
 
 function App() {
+  // recoil X 방식
+  // const [isDark, setIsDark] = useState(false);
+  // const toggleDark = () => setIsDark((current) => !current);
+
+  const isDark = useRecoilValue(isDarkAtom);
+
   return (
     <>
-      <GlobalStyle />
-      <Outlet />
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
+        <GlobalStyle />
+        <Outlet /* recoil X 방식 : context={{ toggleDark, isDark }} */ />
+        <ReactQueryDevtools initialIsOpen={true} />
+      </ThemeProvider>
     </>
   );
 }

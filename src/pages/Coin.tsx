@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, useLocation, useParams, useMatch } from "react-router";
+import {
+  Outlet,
+  useLocation,
+  useParams,
+  useMatch,
+  useOutletContext,
+} from "react-router";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -207,7 +213,7 @@ const Coin = () => {
             </OverviewItem>
             <OverviewItem>
               <span>Price:</span>
-              <span>${tickersData?.quotes.USD.price.toFixed(2)}</span>
+              <span>${tickersData?.quotes?.USD?.price?.toFixed(2)}</span>
             </OverviewItem>
           </Overview>
           <Description>{infoData?.description}</Description>
@@ -224,7 +230,11 @@ const Coin = () => {
           {/* v6 nested route */}
           <Tabs>
             <Tab isActive={chartMatch !== null}>
-              <Link to={`/${coinId}/chart`}>Chart</Link>
+              <Link
+                to={`/${coinId}/chart`} /* state={{ isDark: state.isDark }} */
+              >
+                Chart
+              </Link>
             </Tab>
             <Tab isActive={priceMatch !== null}>
               <Link
